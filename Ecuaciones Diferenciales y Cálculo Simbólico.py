@@ -600,7 +600,6 @@ class IntegratedMathApp(tk.Tk):
         tab_id = list(self.tabs.keys()).index(model_type)
         self.notebook.select(tab_id)
         
-        # Actualizar barra de estado
         self._update_status(f"Modelo activo: {model_type.value}")
     
     def _setup_defaults(self):
@@ -611,6 +610,8 @@ class IntegratedMathApp(tk.Tk):
     
     def _init_cooling_tab(self, parent):
         """Inicializa la pestaña de enfriamiento de Newton"""
+        c = self.COLORS
+        
         # Frame dividido
         left_frame = ttk.Frame(parent)
         left_frame.pack(side='left', fill='y', padx=10, pady=10)
@@ -620,7 +621,7 @@ class IntegratedMathApp(tk.Tk):
         
         # Controles
         tk.Label(left_frame, text="Parámetros de Enfriamiento", 
-                 font=('Arial', 11, 'bold')).pack(anchor='w', pady=(0, 10))
+                 font=('Segoe UI', 11, 'bold'), bg=c['bg'], fg=c['accent']).pack(anchor='w', pady=(0, 10))
         
         # Variables
         self.T0_var = tk.DoubleVar(value=self.params.T0)
@@ -639,30 +640,35 @@ class IntegratedMathApp(tk.Tk):
         for label, var in fields:
             frame = ttk.Frame(left_frame)
             frame.pack(fill='x', pady=5)
-            tk.Label(frame, text=label, width=25).pack(side='left')
+            tk.Label(frame, text=label, width=25, anchor='w', bg=c['bg'], fg=c['text_primary']).pack(side='left')
             ttk.Entry(frame, textvariable=var, width=15).pack(side='right')
         
         # Botones
         btn_frame = ttk.Frame(left_frame)
         btn_frame.pack(fill='x', pady=20)
         
-        ttk.Button(btn_frame, text="Calcular Automáticamente",
-                  command=self._calculate_auto_cooling).pack(fill='x', pady=2)
+        btn_auto = ttk.Button(btn_frame, text="Calcular Automáticamente",
+                   command=self._calculate_auto_cooling)
+        btn_auto.pack(fill='x', pady=2)
         
-        ttk.Button(btn_frame, text="Graficar Solución",
-                  command=self._plot_cooling).pack(fill='x', pady=2)
+        btn_plot = ttk.Button(btn_frame, text="Graficar Solución",
+                   command=self._plot_cooling)
+        btn_plot.pack(fill='x', pady=2)
         
-        ttk.Button(btn_frame, text="Ver Derivación Matemática",
-                  command=self._show_cooling_derivation).pack(fill='x', pady=2)
+        btn_math = ttk.Button(btn_frame, text="Ver Derivación Matemática",
+                   command=self._show_cooling_derivation)
+        btn_math.pack(fill='x', pady=2)
         
         # Área de gráfica
-        self.fig_cooling = Figure(figsize=(8, 6))
-        self.ax_cooling = self.fig_cooling.add_subplot(111)
+        self.fig_cooling = Figure(figsize=(8, 6), facecolor=c['bg'])
+        self.ax_cooling = self.fig_cooling.add_subplot(111, facecolor=c['content_bg'])
         self.canvas_cooling = FigureCanvasTkAgg(self.fig_cooling, right_frame)
         self.canvas_cooling.get_tk_widget().pack(fill='both', expand=True)
     
     def _init_radioactive_tab(self, parent):
         """Inicializa la pestaña de decaimiento radioactivo"""
+        c = self.COLORS
+        
         left_frame = ttk.Frame(parent)
         left_frame.pack(side='left', fill='y', padx=10, pady=10)
         
@@ -671,7 +677,7 @@ class IntegratedMathApp(tk.Tk):
         
         # Controles
         tk.Label(left_frame, text="Parámetros de Decaimiento", 
-                 font=('Arial', 11, 'bold')).pack(anchor='w', pady=(0, 10))
+                 font=('Segoe UI', 11, 'bold'), bg=c['bg'], fg=c['accent']).pack(anchor='w', pady=(0, 10))
         
         # Variables
         self.N0_var = tk.IntVar(value=self.params.N0)
@@ -689,27 +695,31 @@ class IntegratedMathApp(tk.Tk):
         for label, var in fields:
             frame = ttk.Frame(left_frame)
             frame.pack(fill='x', pady=5)
-            tk.Label(frame, text=label, width=20).pack(side='left')
+            tk.Label(frame, text=label, width=20, anchor='w', bg=c['bg'], fg=c['text_primary']).pack(side='left')
             ttk.Entry(frame, textvariable=var, width=15).pack(side='right')
         
         # Botones
         btn_frame = ttk.Frame(left_frame)
         btn_frame.pack(fill='x', pady=20)
         
-        ttk.Button(btn_frame, text="Ejecutar Simulación",
-                  command=self._plot_decay).pack(fill='x', pady=2)
+        btn_sim = ttk.Button(btn_frame, text="Ejecutar Simulación",
+                   command=self._plot_decay)
+        btn_sim.pack(fill='x', pady=2)
         
-        ttk.Button(btn_frame, text="Comparar Métodos",
-                  command=self._compare_decay_methods).pack(fill='x', pady=2)
+        btn_comp = ttk.Button(btn_frame, text="Comparar Métodos",
+                   command=self._compare_decay_methods)
+        btn_comp.pack(fill='x', pady=2)
         
         # Área de gráfica
-        self.fig_decay = Figure(figsize=(8, 6))
-        self.ax_decay = self.fig_decay.add_subplot(111)
+        self.fig_decay = Figure(figsize=(8, 6), facecolor=c['bg'])
+        self.ax_decay = self.fig_decay.add_subplot(111, facecolor=c['content_bg'])
         self.canvas_decay = FigureCanvasTkAgg(self.fig_decay, right_frame)
         self.canvas_decay.get_tk_widget().pack(fill='both', expand=True)
     
     def _init_exact_de_tab(self, parent):
         """Inicializa la pestaña de ED Exactas"""
+        c = self.COLORS
+        
         # Frame principal dividido
         top_frame = ttk.Frame(parent)
         top_frame.pack(fill='x', padx=10, pady=10)
@@ -719,16 +729,16 @@ class IntegratedMathApp(tk.Tk):
         
         # Entrada de ecuaciones
         tk.Label(top_frame, text="Ecuación Exacta: M(x,y)dx + N(x,y)dy = 0",
-                 font=('Arial', 11, 'bold')).pack(anchor='w', pady=(0, 10))
+                 font=('Segoe UI', 11, 'bold'), bg=c['bg'], fg=c['accent']).pack(anchor='w', pady=(0, 10))
         
         input_frame = ttk.Frame(top_frame)
         input_frame.pack(fill='x', pady=10)
         
-        tk.Label(input_frame, text="M(x,y) =").pack(side='left', padx=(0, 5))
+        tk.Label(input_frame, text="M(x,y) =", bg=c['bg'], fg=c['text_primary']).pack(side='left', padx=(0, 5))
         self.M_expr_var = tk.StringVar(value="2*x*y")
         ttk.Entry(input_frame, textvariable=self.M_expr_var, width=20).pack(side='left', padx=(0, 20))
         
-        tk.Label(input_frame, text="N(x,y) =").pack(side='left', padx=(0, 5))
+        tk.Label(input_frame, text="N(x,y) =", bg=c['bg'], fg=c['text_primary']).pack(side='left', padx=(0, 5))
         self.N_expr_var = tk.StringVar(value="x**2 - y**2")
         ttk.Entry(input_frame, textvariable=self.N_expr_var, width=20).pack(side='left')
         
@@ -736,12 +746,12 @@ class IntegratedMathApp(tk.Tk):
         cond_frame = ttk.Frame(top_frame)
         cond_frame.pack(fill='x', pady=10)
         
-        tk.Label(cond_frame, text="Condición inicial:").pack(side='left', padx=(0, 5))
-        tk.Label(cond_frame, text="x₀ =").pack(side='left', padx=(0, 5))
+        tk.Label(cond_frame, text="Condición inicial:", bg=c['bg'], fg=c['text_secondary']).pack(side='left', padx=(0, 5))
+        tk.Label(cond_frame, text="x₀ =", bg=c['bg'], fg=c['text_primary']).pack(side='left', padx=(0, 5))
         self.x0_var = tk.DoubleVar(value=1.0)
         ttk.Entry(cond_frame, textvariable=self.x0_var, width=8).pack(side='left', padx=(0, 15))
         
-        tk.Label(cond_frame, text="y₀ =").pack(side='left', padx=(0, 5))
+        tk.Label(cond_frame, text="y₀ =", bg=c['bg'], fg=c['text_primary']).pack(side='left', padx=(0, 5))
         self.y0_var = tk.DoubleVar(value=2.0)
         ttk.Entry(cond_frame, textvariable=self.y0_var, width=8).pack(side='left')
         
@@ -752,12 +762,20 @@ class IntegratedMathApp(tk.Tk):
         # Área de resultados
         self.exact_result_text = scrolledtext.ScrolledText(bottom_frame, 
                                                           wrap=tk.WORD,
-                                                          font=('Courier', 10),
-                                                          height=20)
+                                                          font=('Consolas', 10),
+                                                          height=20,
+                                                          bg=c['content_bg'],
+                                                          fg=c['text_primary'],
+                                                          insertbackground='white',
+                                                          bd=0,
+                                                          padx=8,
+                                                          pady=8)
         self.exact_result_text.pack(fill='both', expand=True)
     
     def _init_nonexact_de_tab(self, parent):
         """Inicializa la pestaña de ED No Exactas"""
+        c = self.COLORS
+        
         # Frame principal dividido
         top_frame = ttk.Frame(parent)
         top_frame.pack(fill='x', padx=10, pady=10)
@@ -767,10 +785,10 @@ class IntegratedMathApp(tk.Tk):
         
         # Título y descripción
         tk.Label(top_frame, text="Buscar Factor Integrante para ED No Exactas",
-                 font=('Arial', 11, 'bold')).pack(anchor='w', pady=(0, 10))
+                 font=('Segoe UI', 11, 'bold'), bg=c['bg'], fg=c['accent']).pack(anchor='w', pady=(0, 10))
         
         desc_text = "Para ecuaciones de la forma M(x,y)dx + N(x,y)dy = 0 que NO son exactas"
-        tk.Label(top_frame, text=desc_text, font=('Arial', 9)).pack(anchor='w', pady=(0, 5))
+        tk.Label(top_frame, text=desc_text, font=('Segoe UI', 9), bg=c['bg'], fg=c['text_secondary']).pack(anchor='w', pady=(0, 5))
         
         # Frame de entrada
         input_frame = ttk.LabelFrame(top_frame, text="Ingresar ecuación", padding=10)
@@ -779,14 +797,14 @@ class IntegratedMathApp(tk.Tk):
         # M(x,y)
         m_frame = ttk.Frame(input_frame)
         m_frame.pack(fill='x', pady=5)
-        tk.Label(m_frame, text="M(x,y) =", width=10).pack(side='left')
+        tk.Label(m_frame, text="M(x,y) =", width=10, anchor='w', bg=c['bg'], fg=c['text_primary']).pack(side='left')
         self.M_nonexact_var = tk.StringVar(value="y")
         ttk.Entry(m_frame, textvariable=self.M_nonexact_var, width=30).pack(side='left', padx=5)
         
         # N(x,y)
         n_frame = ttk.Frame(input_frame)
         n_frame.pack(fill='x', pady=5)
-        tk.Label(n_frame, text="N(x,y) =", width=10).pack(side='left')
+        tk.Label(n_frame, text="N(x,y) =", width=10, anchor='w', bg=c['bg'], fg=c['text_primary']).pack(side='left')
         self.N_nonexact_var = tk.StringVar(value="x + y")
         ttk.Entry(n_frame, textvariable=self.N_nonexact_var, width=30).pack(side='left', padx=5)
         
@@ -803,11 +821,15 @@ class IntegratedMathApp(tk.Tk):
         for desc, m_ex, n_ex in examples:
             frame = ttk.Frame(examples_frame)
             frame.pack(fill='x', pady=2)
-            tk.Label(frame, text=desc, width=25, anchor='w').pack(side='left')
-            tk.Button(frame, text="Usar", 
-                     command=lambda m=m_ex, n=n_ex: self._load_example_nonexact(m, n),
-                     width=10).pack(side='right', padx=5)
-            tk.Label(frame, text=f"M={m_ex}, N={n_ex}", width=20).pack(side='right')
+            tk.Label(frame, text=desc, width=25, anchor='w', bg=c['bg'], fg=c['text_secondary']).pack(side='left')
+            btn = tk.Button(frame, text="Usar", 
+                      command=lambda m=m_ex, n=n_ex: self._load_example_nonexact(m, n),
+                      width=10, font=('Segoe UI', 9), bg=c['btn_normal'], fg=c['text_primary'], relief='flat')
+            btn.pack(side='right', padx=5)
+            btn.bind('<Enter>', lambda e, b=btn: b.config(bg=c['btn_hover']))
+            btn.bind('<Leave>', lambda e, b=btn: b.config(bg=c['btn_normal']))
+            
+            tk.Label(frame, text=f"M={m_ex}, N={n_ex}", width=20, bg=c['bg'], fg=c['text_primary']).pack(side='right')
         
         # Botón de búsqueda
         ttk.Button(top_frame, text="Encontrar Factor Integrante",
@@ -816,21 +838,29 @@ class IntegratedMathApp(tk.Tk):
         # Área de resultados
         self.nonexact_result_text = scrolledtext.ScrolledText(bottom_frame,
                                                              wrap=tk.WORD,
-                                                             font=('Courier', 10),
-                                                             height=20)
+                                                             font=('Consolas', 10),
+                                                             height=20,
+                                                             bg=c['content_bg'],
+                                                             fg=c['text_primary'],
+                                                             insertbackground='white',
+                                                             bd=0,
+                                                             padx=8,
+                                                             pady=8)
         self.nonexact_result_text.pack(fill='both', expand=True)
     
     def _init_symbolic_tab(self, parent):
         """Inicializa la pestaña de cálculo simbólico"""
+        c = self.COLORS
+        
         # Frame de entrada
         input_frame = ttk.Frame(parent)
         input_frame.pack(fill='x', padx=10, pady=10)
         
-        tk.Label(input_frame, text="Expresión:", font=('Arial', 10)).pack(side='left', padx=(0, 5))
+        tk.Label(input_frame, text="Expresión:", font=('Segoe UI', 10), bg=c['bg'], fg=c['text_primary']).pack(side='left', padx=(0, 5))
         self.sym_expr_var = tk.StringVar(value="x**2 + sin(x)")
         ttk.Entry(input_frame, textvariable=self.sym_expr_var, width=30).pack(side='left', padx=(0, 20))
         
-        tk.Label(input_frame, text="Variable:").pack(side='left', padx=(0, 5))
+        tk.Label(input_frame, text="Variable:", font=('Segoe UI', 10), bg=c['bg'], fg=c['text_primary']).pack(side='left', padx=(0, 5))
         self.sym_var_var = tk.StringVar(value="x")
         ttk.Entry(input_frame, textvariable=self.sym_var_var, width=5).pack(side='left', padx=(0, 20))
         
@@ -853,20 +883,28 @@ class IntegratedMathApp(tk.Tk):
         
         self.symbolic_result_text = scrolledtext.ScrolledText(result_frame,
                                                             wrap=tk.WORD,
-                                                            font=('Courier', 10),
-                                                            height=15)
+                                                            font=('Consolas', 10),
+                                                            height=15,
+                                                            bg=c['content_bg'],
+                                                            fg=c['text_primary'],
+                                                            insertbackground='white',
+                                                            bd=0,
+                                                            padx=8,
+                                                            pady=8)
         self.symbolic_result_text.pack(fill='both', expand=True)
     
     def _init_partial_deriv_tab(self, parent):
         """Inicializa la pestaña de derivadas parciales"""
+        c = self.COLORS
+        
         # Entrada
         input_frame = ttk.Frame(parent)
         input_frame.pack(fill='x', padx=10, pady=10)
         
-        tk.Label(input_frame, text="f(", font=('Arial', 10)).pack(side='left')
+        tk.Label(input_frame, text="f(", font=('Segoe UI', 10), bg=c['bg'], fg=c['text_primary']).pack(side='left')
         self.partial_expr_var = tk.StringVar(value="x**2*y + sin(x*y)")
         ttk.Entry(input_frame, textvariable=self.partial_expr_var, width=25).pack(side='left')
-        tk.Label(input_frame, text=") donde variables:").pack(side='left', padx=(5, 5))
+        tk.Label(input_frame, text=") donde variables:", font=('Segoe UI', 10), bg=c['bg'], fg=c['text_primary']).pack(side='left', padx=(5, 5))
         self.partial_vars_var = tk.StringVar(value="x,y")
         ttk.Entry(input_frame, textvariable=self.partial_vars_var, width=10).pack(side='left')
         
@@ -889,8 +927,14 @@ class IntegratedMathApp(tk.Tk):
         
         self.partial_result_text = scrolledtext.ScrolledText(result_frame,
                                                            wrap=tk.WORD,
-                                                           font=('Courier', 10),
-                                                           height=15)
+                                                           font=('Consolas', 10),
+                                                           height=15,
+                                                           bg=c['content_bg'],
+                                                           fg=c['text_primary'],
+                                                           insertbackground='white',
+                                                           bd=0,
+                                                           padx=8,
+                                                           pady=8)
         self.partial_result_text.pack(fill='both', expand=True)
     
     # ===== MÉTODOS DE CÁLCULO =====
@@ -1252,15 +1296,18 @@ class IntegratedMathApp(tk.Tk):
     
     def _show_cooling_derivation(self):
         """Muestra la derivación matemática de la ley de enfriamiento"""
+        c = self.COLORS
         dialog = tk.Toplevel(self)
         dialog.title("Derivación Matemática - Ley de Enfriamiento")
-        dialog.geometry("600x400")
+        dialog.geometry("600x440")
+        dialog.configure(bg=c['bg'])
         
-        text = scrolledtext.ScrolledText(dialog, wrap=tk.WORD, font=('Arial', 10))
+        text = scrolledtext.ScrolledText(dialog, wrap=tk.WORD, font=('Segoe UI', 10),
+                                         bg=c['content_bg'], fg=c['text_primary'],
+                                         insertbackground='white', bd=0, padx=8, pady=8)
         text.pack(fill='both', expand=True, padx=10, pady=10)
         
         derivation_text = """DERIVACIÓN DE LA LEY DE ENFRIAMIENTO DE NEWTON
-
 1. Ley física básica:
    La tasa de cambio de temperatura es proporcional a la diferencia
    entre la temperatura del objeto y la temperatura ambiente.
@@ -1299,11 +1346,15 @@ Esta es la solución analítica que utilizamos en la aplicación."""
     
     def _compare_decay_methods(self):
         """Compara diferentes métodos de resolución de decaimiento"""
+        c = self.COLORS
         dialog = tk.Toplevel(self)
         dialog.title("Comparación de Métodos - Decaimiento")
-        dialog.geometry("500x300")
+        dialog.geometry("550x340")
+        dialog.configure(bg=c['bg'])
         
-        text = scrolledtext.ScrolledText(dialog, wrap=tk.WORD, font=('Courier', 9))
+        text = scrolledtext.ScrolledText(dialog, wrap=tk.WORD, font=('Consolas', 9),
+                                         bg=c['content_bg'], fg=c['text_primary'],
+                                         insertbackground='white', bd=0, padx=8, pady=8)
         text.pack(fill='both', expand=True, padx=10, pady=10)
         
         try:
@@ -1338,6 +1389,8 @@ Esta es la solución analítica que utilizamos en la aplicación."""
             text.insert(1.0, f"Error: {str(e)}")
         
         text.config(state='disabled')
+        
+        ttk.Button(dialog, text="Cerrar", command=dialog.destroy).pack(pady=10)
 
 # ===== PUNTO DE ENTRADA PRINCIPAL =====
 def main():
